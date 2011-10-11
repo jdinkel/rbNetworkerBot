@@ -1,0 +1,51 @@
+<%
+  # I should pass in tapes, logs, and summaries as an array of items/lines
+
+  #tapes = ['tape9']
+  tapes = ['tape1', 'tape2', 'tape3', 'tape4']
+  logs  = ['Log line 1', 'Log line 2', 'Log line 3', 'Log line 4']
+
+  if tapes.length == 1 # I'll probably keep this code in the view
+    an_s = ''
+  else
+    an_s = 's'
+  end
+
+  summaries = ['Summary of job1: some big ol long status that I don\'t want to get wrapped, or do I?', 'Summary of job2: Another big ol long status that I\'m not sure how I want it to end up', 'Summary of job3: wrapping these summaries in code ticks looks ugly']
+
+  if summaries && tapes  # Processing the subject should go in the email processor, not here
+    subject = 'Backup Job results'
+    subject = subject + ', with logs' if logs
+  else
+    subject = 'Backup Job Not Finished'
+  end
+
+  finished = false
+
+#========================================================================= -%>
+<% if finished -%>
+
+### SUMMARY
+------------------------------------------------------------------------------
+
+Tape<%= an_s %> used: <%= tapes.join(', ') %>
+
+<%= summaries.join "  \n" %>
+
+Please put **exactly <%= "#{tapes.count} tape#{an_s}" %>** back in the tape library.
+
+------------------------------------------------------------------------------
+<% if logs -%>
+
+### LOGS
+
+    <%= logs.join "\n    " %>
+<% end -%>
+<% else -%>
+
+### PARTIAL LOGS
+
+The backup job has not finished.  Here are the logs so far:
+
+    <%= logs.join "\n    " %>
+<% end -%>
