@@ -1,4 +1,4 @@
-require 'erb'
+require 'erubis'
 # templates for creating emails, so I don't have to dirty up the main program
 # file with all this formatting.
 
@@ -49,5 +49,5 @@ The backup job has not finished.  Here are the logs so far:
 <% end %>
 END_OF_EMAIL
 
-  ERB.new(the_email, nil, '<>').result(binding)
+  Erubis::FastEruby.new(the_email).result(:params=>params, :an_s=>an_s, :subject=>subject)
 end
