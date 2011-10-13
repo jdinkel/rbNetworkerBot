@@ -14,6 +14,15 @@ end
 
 todays_backups = Backups.new
 
+# ...
+=begin
+summary_email = todays_backups.summary_email # this will need to return a Mail object
+full_email = todays_backups.full_email
+summary_email.deliver!
+full_email.deliver!
+=end
+# or: todays_backups.summary_email.deliver!
+
 ################## OLD Script ################################################
 require 'net/smtp'
 require File.join(File.dirname(__FILE__), "libs", "templates_bb.rb")
