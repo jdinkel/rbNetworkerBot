@@ -11,4 +11,4 @@ does.
 Dependencies
 ------------------------------------------------------------------------------
 
-Right now it depends on `redcarpet` and `erubis`.
+Right now it depends on `redcarpet`, `erubis`, and `mail` gems.
