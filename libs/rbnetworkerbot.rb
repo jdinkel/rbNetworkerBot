@@ -101,7 +101,7 @@ def create_email(params)
 
   if params[:summaries] && params[:tapes]
     email_subject = 'Backup Job results'
-    email_subject = email_subject + ', with logs' if logs
+    email_subject = email_subject + ', with logs' if params[:logs]
   else
     email_subject = 'Backup Job Not Finished'
   end
