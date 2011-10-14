@@ -29,7 +29,7 @@ full_email.deliver!
 
 ################## OLD Script ################################################
 require 'net/smtp'
-require File.join(File.dirname(__FILE__), "libs", "templates_bb.rb")
+#require File.join(File.dirname(__FILE__), "libs", "templates_bb.rb")
 
 send_to = config['send_to']              # email address for backup report
 #send_to = 'jdinkel@bucoks.com'          # temp email during testing
