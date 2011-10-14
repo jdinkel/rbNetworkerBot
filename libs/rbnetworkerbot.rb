@@ -106,9 +106,16 @@ def create_email(params)
     email_subject = 'Backup Job Not Finished'
   end
 
+  # determine if tape(s) should be plural
+  if tapes.length == 1
+    an_s = ''
+  else
+    an_s = 's'
+  end
+
   email_template = File.read(EMAIL_TEMPLATE_LOCATION)
   email_eruby = Erubis::FastEruby.new(email_template)
-  erb_binding = { :summaries => params[:summaries], :tapes => params[:tapes], :logs => params[:logs]}
+  erb_binding = { :summaries => params[:summaries], :tapes => params[:tapes], :logs => params[:logs], :an_s => an_s}
   email_markdown = Redcarpet.new(email_eruby.result(erb_binding))
 
   # return this object
