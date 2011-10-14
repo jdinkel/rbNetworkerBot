@@ -107,7 +107,7 @@ def create_email(params)
   end
 
   # determine if tape(s) should be plural
-  if tapes.length == 1
+  if params[:tapes].length == 1
     an_s = ''
   else
     an_s = 's'
