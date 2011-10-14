@@ -12,6 +12,10 @@ rescue
   exit(false)
 end
 
+## Constants
+EMAIL_TEMPLATE_LOCATION = File.join(File.dirname(__FILE__), 'templates', 'email_notification.markdown.erb')
+SENDER_ADDRESS = 'backups01@bucoks.com'
+
 todays_backups = Backups.new
 
 # ...
@@ -102,12 +106,23 @@ end
 
 # we are going to take a break to send the email notifications and then relabel the remaining tapes
 
+# compose the email without logs
+email_params = {:name => send_to_name, :address => send_to, :email_server => email_server, :sender_address => SENDER_ADDRESS}
+email_params.merge!(:tapes => tapes, :summaries => job_results)
+summary_email = create_email(email_params)
+# compose the email with logs
+email_params.merge!(:logs => logs)
+logs_email = create_email(email_params)
+# send the emails
+summary_email.deliver!
+logs_email.deliver!
+
 # compose and send the email without logs
-the_email = create_email( :name => send_to_name, :address => send_to, :tapes => tapes, :summary => job_results.join($/) )
-Net::SMTP.start(email_server) { |smtp| smtp.send_message(the_email, 'backups01@bucoks.com', send_to) }
+#the_email = create_email( :name => send_to_name, :address => send_to, :tapes => tapes, :summary => job_results.join($/) )
+#Net::SMTP.start(email_server) { |smtp| smtp.send_message(the_email, 'backups01@bucoks.com', send_to) }
 # compose and send the email, with logs
-the_email = create_email( :name => send_to_name, :address => send_to, :tapes => tapes, :summary => job_results.join($/), :logs => logs.join($/) )
-Net::SMTP.start(email_server) { |smtp| smtp.send_message(the_email, 'backups01@bucoks.com', send_to) }
+#the_email = create_email( :name => send_to_name, :address => send_to, :tapes => tapes, :summary => job_results.join($/), :logs => logs.join($/) )
+#Net::SMTP.start(email_server) { |smtp| smtp.send_message(the_email, 'backups01@bucoks.com', send_to) }
 
 if tapes.length > 0
   unless devel_mode

@@ -1,3 +1,7 @@
+require 'mail'
+require 'erubis'
+require 'redcarpet'
+
 class Backups
 
   def initialize
@@ -90,6 +94,38 @@ def find_jobs(the_logs)
     end
   end
   jobs.uniq
+end
+
+def create_email(params)
+  # params = :name (send_to_name), :address (send_to_address), :tapes, :summaries, :logs, :email_server, :sender_address
+
+  if params[:summaries] && params[:tapes]
+    email_subject = 'Backup Job results'
+    email_subject = email_subject + ', with logs' if logs
+  else
+    email_subject = 'Backup Job Not Finished'
+  end
+
+  email_template = File.read(EMAIL_TEMPLATE_LOCATION)
+  email_eruby = Erubis::FastEruby.new(email_template)
+  erb_binding = { :summaries => params[:summaries], :tapes => params[:tapes], :logs => params[:logs]}
+  email_markdown = Redcarpet.new(email_eruby.result(erb_binding))
+
+  # return this object
+  Mail.new do
+    from     "The Backup Server <#{params[:sender_address]}>"
+    to       "#{params[:name]} <#{params[:address]}>"
+    subject  email_subject
+    delivery_method :smtp, { :address => params[:email_server], :enable_starttls_auto => false }
+    text_part do
+      body email_markdown.text
+    end
+    html_part do
+      content_type 'text/html; charset=UTF-8'
+      body email_markdown.to_html
+    end
+  end
+
 end
 
 ###################################
