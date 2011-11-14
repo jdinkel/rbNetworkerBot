@@ -45,11 +45,23 @@ check_interval = config['check_interval']                # how long between chec
 check_notify_interval = config['check_notify_interval']  # how often, in minutes, to notify that the backup is not done, set equal or more than check_time to notify once, not implemented
 check_notify_first = config['check_notify_first']        # how long before sending the first notification the backup is not finished, not yet implemented
 
+days_back = config['days_back'].to_i
+# allow overriding days_back from command line
+ARGV.each do |arg|
+  if arg[0..11] == '--days_back='
+    # do a basic check to be sure it is a legit value
+    if arg[12..-1] == arg[12..-1].to_i.to_s
+      days_back = arg[12..-1].to_i
+    else
+      puts 'Invalid value for --days_back='
+    end
+  end
+end
+
 if config['devel_mode']
   puts 'Development mode is ON.'
   devel_mode = true
   send_to = config['devel_email'] unless config['devel_email'].nil?
-  days_back = config['days_back'].to_i
 else
   devel_mode = false
 end
@@ -57,10 +69,7 @@ end
 ########## Main Program ###########
 
 y = yesterday(Time.now)
-
-if devel_mode
-  days_back.times { y = yesterday(y) }
-end
+days_back.times { y = yesterday(y) }
 
 month = y.strftime("%m")
 day = y.strftime("%d")
